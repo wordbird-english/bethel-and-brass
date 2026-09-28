@@ -8,7 +8,7 @@ const works = [
   ['12','Peace Be Within Thy Walls','Psalm 122:7 · KJV excerpt','walls','Stone wall and arched door with olive sprig']
 ];
 const gallery = document.querySelector('#gallery');
-works.forEach(([number,title,note,slug,subject]) => {
+if (gallery) works.forEach(([number,title,note,slug,subject]) => {
   const item = document.createElement('figure');
   item.className = 'gallery-card';
   const image = document.createElement('img');
@@ -17,9 +17,10 @@ works.forEach(([number,title,note,slug,subject]) => {
   image.width = 880; image.height = 1173; image.loading = 'lazy';
   const caption = document.createElement('figcaption');
   const numberLine = document.createElement('span'); numberLine.textContent = `${number} / BETHEL & BRASS`;
-  const heading = document.createElement('strong'); heading.textContent = title;
+  const heading = document.createElement('strong'); if (detailSlug) { const link=document.createElement('a'); link.href='/products/'+detailSlug+'/'; link.textContent=title; heading.append(link); } else heading.textContent=title;
   const qualifier = document.createElement('small'); qualifier.textContent = note;
   const live = number === '02' || number === '03' || number === '05' || number === '08';
+  const detailSlug = ({'02':'welcome-bruchim-habaim','03':'a-light-to-the-nations','05':'shabbat-shalom','08':'new-every-morning'})[number];
   const availability = document.createElement(live ? 'span' : 'b');
   if (live) {
     availability.className = 'buy-row';
@@ -28,19 +29,19 @@ works.forEach(([number,title,note,slug,subject]) => {
     availability.append(price, button);
   } else availability.textContent = 'COMING SOON';
   caption.append(numberLine, heading, qualifier, availability);
-  item.append(image, caption); gallery.append(item);
+  if (detailSlug) { const artLink=document.createElement('a'); artLink.className='product-card-link'; artLink.href='/products/'+detailSlug+'/'; artLink.setAttribute('aria-label','View '+title+' product page'); artLink.append(image); item.append(artLink,caption); } else item.append(image,caption); gallery.append(item);
 });
 
 const cartKey = 'bb-cart-06';
 const priorCartKey = 'bb-cart-05';
 const legacyCartKey = 'bb-cart-01';
 const products = {
-  '01': {title: 'Shalom in This Home', variant: 'bf19f662-ced7-4ed3-81eb-0dea92735d0a', image: '3-11-bb-wall-art-01-shalom-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
-  '02': {title: 'Welcome / Bruchim Haba’im', variant: '0e026778-cb34-4ed6-a9ad-72da28e5e287', image: '4-12-bb-wall-art-02-welcome-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
-  '03': {title: 'A Light to the Nations', variant: 'd2069209-2c3d-4858-b92a-de86a8a130e8', image: '5-13-bb-wall-art-03-nations-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
-  '07': {title: 'I Will Lift Up Mine Eyes', variant: 'a50df63b-e70a-4c7c-bfcb-d73c8052af02', image: '9-17-bb-wall-art-07-eyes-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
-  '05': {title: 'Shabbat Shalom', variant: '1340c0c2-553c-4c74-b9a8-74c95198653b', image: '7-15-bb-wall-art-05-shabbat-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
-  '08': {title: 'New Every Morning', variant: '7dafe6c7-042c-4fb3-8002-4f638852253c', image: '10-18-bb-wall-art-08-morning-12x16-300dpi-web.jpg?v=olive-v2-20260928b'}
+  '01': {title: 'Shalom in This Home', variant: 'bf19f662-ced7-4ed3-81eb-0dea92735d0a', image: '/3-11-bb-wall-art-01-shalom-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '02': {title: 'Welcome / Bruchim Haba’im', variant: '0e026778-cb34-4ed6-a9ad-72da28e5e287', image: '/4-12-bb-wall-art-02-welcome-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '03': {title: 'A Light to the Nations', variant: 'd2069209-2c3d-4858-b92a-de86a8a130e8', image: '/5-13-bb-wall-art-03-nations-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '07': {title: 'I Will Lift Up Mine Eyes', variant: 'a50df63b-e70a-4c7c-bfcb-d73c8052af02', image: '/9-17-bb-wall-art-07-eyes-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '05': {title: 'Shabbat Shalom', variant: '1340c0c2-553c-4c74-b9a8-74c95198653b', image: '/7-15-bb-wall-art-05-shabbat-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '08': {title: 'New Every Morning', variant: '7dafe6c7-042c-4fb3-8002-4f638852253c', image: '/10-18-bb-wall-art-08-morning-12x16-300dpi-web.jpg?v=olive-v2-20260928b'}
 };
 const cartPanel = document.querySelector('#shop-cart');
 const scrim = document.querySelector('.cart-scrim');
