@@ -19,33 +19,66 @@ works.forEach(([number,title,note,slug,subject]) => {
   const numberLine = document.createElement('span'); numberLine.textContent = `${number} / BETHEL & BRASS`;
   const heading = document.createElement('strong'); heading.textContent = title;
   const qualifier = document.createElement('small'); qualifier.textContent = note;
-  const availability = document.createElement('b'); availability.textContent = 'COMING SOON';
+  const availability = document.createElement(number === '02' ? 'span' : 'b');
+  if (number === '02') {
+    availability.className = 'buy-row';
+    const price = document.createElement('span'); price.className = 'price'; price.textContent = '$32';
+    const button = document.createElement('button'); button.className = 'add-cart'; button.type = 'button'; button.dataset.product = '02'; button.textContent = 'Add to Cart';
+    availability.append(price, button);
+  } else availability.textContent = 'COMING SOON';
   caption.append(numberLine, heading, qualifier, availability);
   item.append(image, caption); gallery.append(item);
 });
 
-const cartKey = 'bb-cart-01';
+const cartKey = 'bb-cart-02';
+const legacyCartKey = 'bb-cart-01';
+const products = {
+  '01': {title: 'Shalom in This Home', variant: 'bf19f662-ced7-4ed3-81eb-0dea92735d0a', image: '3-11-bb-wall-art-01-shalom-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '02': {title: 'Welcome / Bruchim Haba’im', variant: '0e026778-cb34-4ed6-a9ad-72da28e5e287', image: '4-12-bb-wall-art-02-welcome-12x16-300dpi-web.jpg?v=olive-v2-20260928b'}
+};
 const cartPanel = document.querySelector('#shop-cart');
 const scrim = document.querySelector('.cart-scrim');
 const cartTrigger = document.querySelector('.cart-trigger');
 const cartCheckout = document.querySelector('.cart-checkout');
-const variantId = 'bf19f662-ced7-4ed3-81eb-0dea92735d0a';
-function cartQuantity() { try { return Math.max(0, Math.min(20, Math.floor(Number(localStorage.getItem(cartKey)) || 0))); } catch { return 0; } }
-function setCartQuantity(q) { try { localStorage.setItem(cartKey, String(Number.isFinite(q) ? Math.max(0, Math.min(20, Math.floor(q))) : 0)); } catch {} renderCart(); }
-function renderCart() {
-  const q = cartQuantity();
-  document.querySelector('.cart-count').textContent = q;
-  document.querySelector('.cart-items').innerHTML = q ? '<div class="cart-product"><img src="3-11-bb-wall-art-01-shalom-12x16-300dpi-web.jpg?v=olive-v2-20260928b" alt="Shalom in This Home print"><div><strong>Shalom in This Home</strong><p>12 x 16 in · $32.00</p><label>Quantity <input class="cart-qty" type="number" min="0" max="20" value="' + q + '"></label><button class="cart-remove" type="button">Remove</button></div></div>' : '<p>Your cart is empty.</p>';
-  document.querySelector('.cart-subtotal').textContent = '$' + (q * 32).toFixed(2);
-  cartCheckout.hidden = !q;
-  cartCheckout.href = 'https://bethelandbrass-shop.fourthwall.com/cart/checkout?products=' + variantId + ':' + q + '&currency=USD';
+function clampQuantity(value) { const q = Number(value); return Number.isFinite(q) ? Math.max(0,Math.min(20,Math.floor(q))) : 0; }
+function readCart() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(cartKey) || '{}');
+    if (stored && typeof stored === 'object') return Object.fromEntries(Object.keys(products).map(id => [id,clampQuantity(stored[id])]));
+  } catch {}
+  return {'01':0,'02':0};
 }
-function toggleCart(open) { cartPanel.hidden = !open; scrim.hidden = !open; cartTrigger.setAttribute('aria-expanded', String(open)); document.body.classList.toggle('cart-open',open); if (open) document.querySelector('.cart-close').focus(); else cartTrigger.focus(); }
-document.querySelector('.add-cart').addEventListener('click', () => { setCartQuantity(cartQuantity() + 1); toggleCart(true); });
-cartTrigger.addEventListener('click', () => toggleCart(true));
-document.querySelector('.cart-close').addEventListener('click', () => toggleCart(false));
-scrim.addEventListener('click', () => toggleCart(false));
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !cartPanel.hidden) toggleCart(false); });
-cartPanel.addEventListener('change', e => { if (e.target.matches('.cart-qty')) setCartQuantity(Number(e.target.value)); });
-cartPanel.addEventListener('click', e => { if (e.target.matches('.cart-remove')) setCartQuantity(0); });
+function saveCart(cart) { try { localStorage.setItem(cartKey,JSON.stringify(cart)); } catch {} renderCart(); }
+function setQuantity(id,q) { if (!products[id]) return; const cart=readCart(); cart[id]=clampQuantity(q); saveCart(cart); }
+function renderCart() {
+  const cart=readCart(), total=Object.values(cart).reduce((a,q)=>a+q,0);
+  document.querySelector('.cart-count').textContent=total;
+  const items=document.querySelector('.cart-items'); items.replaceChildren();
+  Object.entries(products).forEach(([id,product]) => {
+    if (!cart[id]) return;
+    const row=document.createElement('div'); row.className='cart-product'; row.dataset.product=id; row.style.marginBottom='22px';
+    const img=document.createElement('img'); img.src=product.image; img.alt=product.title+' print';
+    const body=document.createElement('div');
+    const title=document.createElement('strong'); title.textContent=product.title;
+    const price=document.createElement('p'); price.textContent='12 x 16 in · $32.00';
+    const label=document.createElement('label'); label.textContent='Quantity ';
+    const input=document.createElement('input'); input.className='cart-qty'; input.type='number'; input.min='0'; input.max='20'; input.value=cart[id]; input.setAttribute('aria-label',product.title+' quantity'); label.append(input);
+    const remove=document.createElement('button'); remove.className='cart-remove'; remove.type='button'; remove.textContent='Remove '+product.title;
+    body.append(title,price,label,remove); row.append(img,body); items.append(row);
+  });
+  if (!total) {const empty=document.createElement('p'); empty.textContent='Your cart is empty.'; items.append(empty);}
+  document.querySelector('.cart-subtotal').textContent='$'+(total*32).toFixed(2);
+  cartCheckout.hidden=!total;
+  if (total) cartCheckout.href='https://bethelandbrass-shop.fourthwall.com/cart/checkout?products='+Object.keys(products).filter(id=>cart[id]).map(id=>products[id].variant+':'+cart[id]).join(',')+'&currency=USD';
+  else cartCheckout.removeAttribute('href');
+}
+function toggleCart(open) { cartPanel.hidden=!open; scrim.hidden=!open; cartTrigger.setAttribute('aria-expanded',String(open)); document.body.classList.toggle('cart-open',open); if(open) document.querySelector('.cart-close').focus(); else cartTrigger.focus(); }
+try { if (!localStorage.getItem(cartKey)) { const old=clampQuantity(localStorage.getItem(legacyCartKey)); if(old) localStorage.setItem(cartKey,JSON.stringify({'01':old,'02':0})); } } catch {}
+document.querySelectorAll('.add-cart').forEach(button=>button.addEventListener('click',()=>{ const id=button.dataset.product; setQuantity(id,readCart()[id]+1); toggleCart(true); }));
+cartTrigger.addEventListener('click',()=>toggleCart(true));
+document.querySelector('.cart-close').addEventListener('click',()=>toggleCart(false));
+scrim.addEventListener('click',()=>toggleCart(false));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!cartPanel.hidden)toggleCart(false);});
+cartPanel.addEventListener('change',e=>{if(e.target.matches('.cart-qty'))setQuantity(e.target.closest('[data-product]').dataset.product,e.target.value);});
+cartPanel.addEventListener('click',e=>{if(e.target.matches('.cart-remove'))setQuantity(e.target.closest('[data-product]').dataset.product,0);});
 renderCart();
