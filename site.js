@@ -17,10 +17,10 @@ if (gallery) works.forEach(([number,title,note,slug,subject]) => {
   image.width = 880; image.height = 1173; image.loading = 'lazy';
   const caption = document.createElement('figcaption');
   const numberLine = document.createElement('span'); numberLine.textContent = `${number} / BETHEL & BRASS`;
+  const detailSlug = ({'02':'welcome-bruchim-habaim','03':'a-light-to-the-nations','05':'shabbat-shalom','08':'new-every-morning'})[number];
   const heading = document.createElement('strong'); if (detailSlug) { const link=document.createElement('a'); link.href='/products/'+detailSlug+'/'; link.textContent=title; heading.append(link); } else heading.textContent=title;
   const qualifier = document.createElement('small'); qualifier.textContent = note;
   const live = number === '02' || number === '03' || number === '05' || number === '08';
-  const detailSlug = ({'02':'welcome-bruchim-habaim','03':'a-light-to-the-nations','05':'shabbat-shalom','08':'new-every-morning'})[number];
   const availability = document.createElement(live ? 'span' : 'b');
   if (live) {
     availability.className = 'buy-row';
