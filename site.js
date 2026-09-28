@@ -12,7 +12,7 @@ works.forEach(([number,title,note,slug,subject]) => {
   const item = document.createElement('figure');
   item.className = 'gallery-card';
   const image = document.createElement('img');
-  image.src = `${({"02":"12","03":"13","05":"15","08":"18","09":"19","10":"20","12":"21"})[number]}-bb-wall-art-${number}-${slug}-12x16-300dpi-web.jpg`;
+  image.src = `${({"02":"4-12","03":"5-13","05":"7-15","08":"10-18","09":"11-19","10":"12-20","12":"13-21"})[number]}-bb-wall-art-${number}-${slug}-12x16-300dpi-web.jpg`;
   image.alt = `${title} artwork: ${subject}`;
   image.width = 880; image.height = 1173; image.loading = 'lazy';
   const caption = document.createElement('figcaption');
