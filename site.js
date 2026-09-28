@@ -31,13 +31,14 @@ works.forEach(([number,title,note,slug,subject]) => {
   item.append(image, caption); gallery.append(item);
 });
 
-const cartKey = 'bb-cart-03';
-const priorCartKey = 'bb-cart-02';
+const cartKey = 'bb-cart-04';
+const priorCartKey = 'bb-cart-03';
 const legacyCartKey = 'bb-cart-01';
 const products = {
   '01': {title: 'Shalom in This Home', variant: 'bf19f662-ced7-4ed3-81eb-0dea92735d0a', image: '3-11-bb-wall-art-01-shalom-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
   '02': {title: 'Welcome / Bruchim Haba’im', variant: '0e026778-cb34-4ed6-a9ad-72da28e5e287', image: '4-12-bb-wall-art-02-welcome-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
-  '03': {title: 'A Light to the Nations', variant: 'd2069209-2c3d-4858-b92a-de86a8a130e8', image: '5-13-bb-wall-art-03-nations-12x16-300dpi-web.jpg?v=olive-v2-20260928b'}
+  '03': {title: 'A Light to the Nations', variant: 'd2069209-2c3d-4858-b92a-de86a8a130e8', image: '5-13-bb-wall-art-03-nations-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '07': {title: 'I Will Lift Up Mine Eyes', variant: 'a50df63b-e70a-4c7c-bfcb-d73c8052af02', image: '9-17-bb-wall-art-07-eyes-12x16-300dpi-web.jpg?v=olive-v2-20260928b'}
 };
 const cartPanel = document.querySelector('#shop-cart');
 const scrim = document.querySelector('.cart-scrim');
