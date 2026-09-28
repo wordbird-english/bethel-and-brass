@@ -19,22 +19,25 @@ works.forEach(([number,title,note,slug,subject]) => {
   const numberLine = document.createElement('span'); numberLine.textContent = `${number} / BETHEL & BRASS`;
   const heading = document.createElement('strong'); heading.textContent = title;
   const qualifier = document.createElement('small'); qualifier.textContent = note;
-  const availability = document.createElement(number === '02' ? 'span' : 'b');
-  if (number === '02') {
+  const live = number === '02' || number === '03';
+  const availability = document.createElement(live ? 'span' : 'b');
+  if (live) {
     availability.className = 'buy-row';
     const price = document.createElement('span'); price.className = 'price'; price.textContent = '$32';
-    const button = document.createElement('button'); button.className = 'add-cart'; button.type = 'button'; button.dataset.product = '02'; button.textContent = 'Add to Cart';
+    const button = document.createElement('button'); button.className = 'add-cart'; button.type = 'button'; button.dataset.product = number; button.textContent = 'Add to Cart';
     availability.append(price, button);
   } else availability.textContent = 'COMING SOON';
   caption.append(numberLine, heading, qualifier, availability);
   item.append(image, caption); gallery.append(item);
 });
 
-const cartKey = 'bb-cart-02';
+const cartKey = 'bb-cart-03';
+const priorCartKey = 'bb-cart-02';
 const legacyCartKey = 'bb-cart-01';
 const products = {
   '01': {title: 'Shalom in This Home', variant: 'bf19f662-ced7-4ed3-81eb-0dea92735d0a', image: '3-11-bb-wall-art-01-shalom-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
-  '02': {title: 'Welcome / Bruchim Haba’im', variant: '0e026778-cb34-4ed6-a9ad-72da28e5e287', image: '4-12-bb-wall-art-02-welcome-12x16-300dpi-web.jpg?v=olive-v2-20260928b'}
+  '02': {title: 'Welcome / Bruchim Haba’im', variant: '0e026778-cb34-4ed6-a9ad-72da28e5e287', image: '4-12-bb-wall-art-02-welcome-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
+  '03': {title: 'A Light to the Nations', variant: 'd2069209-2c3d-4858-b92a-de86a8a130e8', image: '5-13-bb-wall-art-03-nations-12x16-300dpi-web.jpg?v=olive-v2-20260928b'}
 };
 const cartPanel = document.querySelector('#shop-cart');
 const scrim = document.querySelector('.cart-scrim');
@@ -73,7 +76,7 @@ function renderCart() {
   else cartCheckout.removeAttribute('href');
 }
 function toggleCart(open) { cartPanel.hidden=!open; scrim.hidden=!open; cartTrigger.setAttribute('aria-expanded',String(open)); document.body.classList.toggle('cart-open',open); if(open) document.querySelector('.cart-close').focus(); else cartTrigger.focus(); }
-try { if (!localStorage.getItem(cartKey)) { const old=clampQuantity(localStorage.getItem(legacyCartKey)); if(old) localStorage.setItem(cartKey,JSON.stringify({'01':old,'02':0})); } } catch {}
+try { if (!localStorage.getItem(cartKey)) { const prior=localStorage.getItem(priorCartKey); if (prior) localStorage.setItem(cartKey,prior); else { const old=clampQuantity(localStorage.getItem(legacyCartKey)); if(old) localStorage.setItem(cartKey,JSON.stringify({'01':old,'02':0})); } } } catch {}
 document.querySelectorAll('.add-cart').forEach(button=>button.addEventListener('click',()=>{ const id=button.dataset.product; setQuantity(id,readCart()[id]+1); toggleCart(true); }));
 cartTrigger.addEventListener('click',()=>toggleCart(true));
 document.querySelector('.cart-close').addEventListener('click',()=>toggleCart(false));
