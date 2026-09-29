@@ -74,9 +74,12 @@ function renderCart() {
     body.append(title,price,label,remove); row.append(img,body); items.append(row);
   });
   if (!total) {const empty=document.createElement('p'); empty.textContent='Your cart is empty.'; items.append(empty);}
-  document.querySelector('.cart-subtotal').textContent='$'+(total*32).toFixed(2);
+  const subtotal=total*32;
+  document.querySelector('.cart-subtotal').textContent='$'+subtotal.toFixed(2);
+  const shipping=document.querySelector('.shipping-progress');
+  if(shipping) shipping.textContent=subtotal>75?'Your cart qualifies for free shipping.':subtotal?'Add $'+(76-subtotal).toFixed(2)+' more for free shipping on orders over $75.':'Free shipping on orders over $75.';
   cartCheckout.hidden=!total;
-  if (total) cartCheckout.href='https://bethelandbrass-shop.fourthwall.com/cart/checkout?products='+Object.keys(products).filter(id=>cart[id]).map(id=>products[id].variant+':'+cart[id]).join(',')+'&currency=USD';
+  if (total) cartCheckout.href='https://checkout.bethelandbrass.com/cart/checkout?products='+Object.keys(products).filter(id=>cart[id]).map(id=>products[id].variant+':'+cart[id]).join(',')+'&currency=USD';
   else cartCheckout.removeAttribute('href');
 }
 function toggleCart(open) { cartPanel.hidden=!open; scrim.hidden=!open; cartTrigger.setAttribute('aria-expanded',String(open)); document.body.classList.toggle('cart-open',open); if(open) document.querySelector('.cart-close').focus(); else cartTrigger.focus(); }
