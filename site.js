@@ -36,6 +36,8 @@ const cartKey = 'bb-cart-06';
 const priorCartKey = 'bb-cart-05';
 const legacyCartKey = 'bb-cart-01';
 const products = {
+  '04': {title: 'Pray for the Peace of Jerusalem', variant: '90a4d1e6-515e-4d1b-9d5e-1e9990f6c237', image: '/6-14-bb-wall-art-04-jerusalem-12x16-300dpi-web.jpg'},
+  '06': {title: 'Let There Be Light', variant: '2b0c01d5-842d-4f8c-b570-6beaf6232d2e', image: '/8-16-bb-wall-art-06-light-12x16-300dpi-web.jpg'},
   '01': {title: 'Shalom in This Home', variant: 'bf19f662-ced7-4ed3-81eb-0dea92735d0a', image: '/3-11-bb-wall-art-01-shalom-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
   '02': {title: 'Welcome / Bruchim Haba’im', variant: '0e026778-cb34-4ed6-a9ad-72da28e5e287', image: '/4-12-bb-wall-art-02-welcome-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
   '03': {title: 'A Light to the Nations', variant: 'd2069209-2c3d-4858-b92a-de86a8a130e8', image: '/5-13-bb-wall-art-03-nations-12x16-300dpi-web.jpg?v=olive-v2-20260928b'},
@@ -77,7 +79,7 @@ function renderCart() {
   const subtotal=total*32;
   document.querySelector('.cart-subtotal').textContent='$'+subtotal.toFixed(2);
   const shipping=document.querySelector('.shipping-progress');
-  if(shipping) shipping.textContent=subtotal>75?'Your cart qualifies for free shipping.':subtotal?'Add $'+(76-subtotal).toFixed(2)+' more for free shipping on orders over $75.':'Free shipping on orders over $75.';
+  if(shipping) shipping.textContent=subtotal>=75?'Your cart qualifies for free shipping.':subtotal?'Add $'+(75-subtotal).toFixed(2)+' more for free shipping on orders $75+.':'Free shipping on orders $75+.';
   cartCheckout.hidden=!total;
   if (total) cartCheckout.href='https://checkout.bethelandbrass.com/cart/checkout?products='+Object.keys(products).filter(id=>cart[id]).map(id=>products[id].variant+':'+cart[id]).join(',')+'&currency=USD';
   else cartCheckout.removeAttribute('href');
